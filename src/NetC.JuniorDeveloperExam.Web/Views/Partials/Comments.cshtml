@@ -1,0 +1,13 @@
+﻿@model NetC.JuniorDeveloperExam.Web.Models.Comment
+@{
+    string avatarName = Model.name.Replace(" ", "+");
+    string avatarUrl = $"https://eu.ui-avatars.com/api/?name={avatarName}";
+}
+<div class="media mb-4">
+    <img class="d-flex mr-3 rounded-circle user-avatar" src="@avatarUrl" alt="@Model.name">
+    <div class="media-body">
+        <h5 class="mt-0">@Model.name <small><em>(@Model.date)</em></small></h5>
+        @Html.Raw(Model.message)
+    </div>
+</div>
+

@@ -33,5 +33,27 @@ namespace NetC.JuniorDeveloperExam.Web.Controllers
 
             return View(blogPost);
         }
+        [HttpPost]
+        public ActionResult AddComment(int Id, Comment comment)
+        {
+            if (ModelState.IsValid) // You should define validation rules in your CommentModel
+            {
+                try
+                {
+                    _blogPostService.AddCommentToBlogPost(Id, comment);
+                    TempData["CommentSuccess"] = "Your comment has been added!";
+                }
+                catch (Exception ex)
+                {
+                    TempData["CommentError"] = "An error occurred while adding the comment: " + ex.Message;
+                }
+            }
+            else
+            {
+                TempData["CommentError"] = "Please fill in all required fields.";
+            }
+
+            return RedirectToAction("BlogPost", new { id = Id });
+        }
     }
 }

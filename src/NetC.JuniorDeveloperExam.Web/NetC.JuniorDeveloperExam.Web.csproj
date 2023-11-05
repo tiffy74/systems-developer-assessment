@@ -172,6 +172,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\BlogPost.cs" />
+    <Compile Include="Models\CommentForm.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\BlogPostService.cs" />
   </ItemGroup>
@@ -201,6 +202,7 @@
     <Content Include="Views\Blog\BlogPost.cshtml" />
     <Content Include="Views\Blog\Index.cshtml" />
     <Content Include="Views\Partials\Comments.cshtml" />
+    <Content Include="Views\Partials\CommentsForm.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

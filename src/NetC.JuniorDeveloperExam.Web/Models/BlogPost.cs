@@ -21,7 +21,7 @@ namespace NetC.JuniorDeveloperExam.Web.Models
         public string title { get; set; }
         public string image { get; set; }
         public string htmlContent { get; set; }
-        public Comment[] comments { get; set; }
+        public List<Comment> comments { get; set; }
     }
 
     public class Comment
@@ -31,5 +31,4 @@ namespace NetC.JuniorDeveloperExam.Web.Models
         public string emailAddress { get; set; }
         public string message { get; set; }
     }
-
 }

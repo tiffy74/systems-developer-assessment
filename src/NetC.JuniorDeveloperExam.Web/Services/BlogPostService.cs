@@ -40,6 +40,8 @@ namespace NetC.JuniorDeveloperExam.Web.Services
         }
         public Blogpost GetBlogPostById(int id)
         {
+            string cacheKey = "BlogPost_" + id;
+
             if (_cache.TryGetValue("BlogPost", out Blogpost cachedBlogPost))
             {
                 return cachedBlogPost;
@@ -63,9 +65,38 @@ namespace NetC.JuniorDeveloperExam.Web.Services
             {
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30)
             };
-            _cache.Set("BlogPost", blogPost.FirstOrDefault(x => x.id == id), cacheEntryOptions);
+            _cache.Set(cacheKey, blogPost.FirstOrDefault(x => x.id == id), cacheEntryOptions);
 
             return blogPost.FirstOrDefault(x => x.id == id);
+        }
+        public void AddCommentToBlogPost(int blogPostId, Comment comment)
+        {
+            // Retrieve the Blogpost JSON data from the file
+            var jsonFilePath = HttpContext.Current.Server.MapPath("~/App_Data/Blog-Posts.json");
+            string jsonContent = File.ReadAllText(jsonFilePath);
+            Rootobject rootObject = JsonConvert.DeserializeObject<Rootobject>(jsonContent);
+
+            // Find the specific blog post by ID
+            Blogpost blogPost = rootObject.blogPosts.FirstOrDefault(post => post.id == blogPostId);
+
+            if (blogPost != null)
+            {
+                var date = DateTime.Now;
+                // Create a new comment
+                Comment newComment = new Comment
+                {
+                    name = comment.name,
+                    emailAddress = comment.emailAddress,
+                    message = comment.message,
+                    date = date
+                };
+
+                // Add the new comment to the blog post's comments
+                blogPost.comments.Add(newComment);
+
+                // Update the JSON data with the new comment
+                File.WriteAllText(jsonFilePath, JsonConvert.SerializeObject(rootObject, Formatting.Indented));
+            }
         }
     }
 }
