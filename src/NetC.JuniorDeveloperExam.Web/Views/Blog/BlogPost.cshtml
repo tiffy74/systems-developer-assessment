@@ -1,0 +1,15 @@
+﻿@model NetC.JuniorDeveloperExam.Web.Models.Blogpost
+@{
+    ViewBag.Title = Model.title;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+    <div class="row">
+        <div class="col-lg-12">
+            <h1 class="mt-4"><a href="@Url.Action("BlogPost", "Blog", new { id = Model.id })">@Model.title</a></h1>
+            <hr>
+            <p>Posted on @Model.date</p>
+            <hr>
+            <p>@Html.Raw(Model.htmlContent)</p>
+        </div>
+    </div>

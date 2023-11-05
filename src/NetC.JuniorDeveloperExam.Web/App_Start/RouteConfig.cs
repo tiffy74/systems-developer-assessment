@@ -1,5 +1,7 @@
-﻿using System.Web.Mvc;
+﻿using System;
+using System.Web.Mvc;
 using System.Web.Routing;
+using Serilog;
 
 namespace NetC.JuniorDeveloperExam.Web
 {
@@ -8,23 +10,32 @@ namespace NetC.JuniorDeveloperExam.Web
         public static void RegisterRoutes(RouteCollection routes)
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
-
-            routes.MapRoute(
-                name: "Blog",
-                url: "",
-                defaults: new { controller = "Blog", action = "Index" }
-            );
-
-            routes.MapRoute(
-                name: "BlogPostById",
-                url: "blog/show/{id}",
-                defaults: new { controller = "Blog", action = "GetBlogPostsById", title = UrlParameter.Optional }
-            );
-
+            try
+            {
+                routes.MapRoute(
+                    name: "Blog",
+                    url: "Blog",
+                    defaults: new { controller = "Blog", action = "Index" });
+            }
+            catch (Exception ex)
+            {
+                Log.Information($"{ex.StackTrace}");
+            }
+            try
+            {
+                routes.MapRoute(
+                    name: "BlogPost",
+                    url: "Blog/{id}",
+                    defaults: new { controller = "Blog", action = "BlogPost", id = "Id" });
+            }
+            catch (Exception ex)
+            {
+                Log.Information($"{ex.StackTrace}");
+            }
             routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",
-                defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }
+                defaults: new { controller = "Blog", action = "Index", id = UrlParameter.Optional }
             );
         }
     }

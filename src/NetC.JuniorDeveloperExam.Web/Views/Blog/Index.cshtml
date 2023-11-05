@@ -1,0 +1,26 @@
+﻿
+@model List<NetC.JuniorDeveloperExam.Web.Models.Rootobject>
+@{
+    ViewBag.Title = "Blog Homepage";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="mt-4">Blog Posts</h1>
+        <hr>
+        <ul>
+            @foreach (var item in Model)
+            {
+                foreach (var blogPost in item.blogPosts)
+                {
+                    <H1><a href="@Url.Action("BlogPost", "Blog", new { id = blogPost.id})">@blogPost.title</a></H1>
+                    <p>@blogPost.date</p>
+                    <p>@Html.Raw(@blogPost.htmlContent)</p>
+                }
+
+            }
+        </ul>
+    </div>
+</div>
+
