@@ -1,4 +1,5 @@
-﻿using NetC.JuniorDeveloperExam.Web.Services;
+﻿using Microsoft.Extensions.Caching.Memory;
+using NetC.JuniorDeveloperExam.Web.Services;
 using System.IO;
 using System.Web;
 using System.Web.Mvc;
@@ -18,7 +19,9 @@ namespace NetC.JuniorDeveloperExam.Web
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
 
+            var cache = new MemoryCache(new MemoryCacheOptions());
             var container = new UnityContainer();
+            container.RegisterInstance<IMemoryCache>(cache);
             container.RegisterType<BlogPostService>();
 
             // Set the Unity dependency resolver to use the Unity container
