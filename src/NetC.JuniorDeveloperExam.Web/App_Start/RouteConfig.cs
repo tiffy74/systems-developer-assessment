@@ -32,6 +32,19 @@ namespace NetC.JuniorDeveloperExam.Web
             {
                 Log.Information($"{ex.StackTrace}");
             }
+
+            try
+            {
+                routes.MapRoute(
+                    name: "AddComment",
+                    url: "Blog/AddComment/{id}",
+                    defaults: new { controller = "Blog", action = "AddComment", id = "Id" });
+            }
+            catch (Exception ex)
+            {
+                Log.Information($"{ex.StackTrace}");
+            }
+
             routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",

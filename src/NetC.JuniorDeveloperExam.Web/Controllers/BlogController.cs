@@ -40,7 +40,29 @@ namespace NetC.JuniorDeveloperExam.Web.Controllers
             {
                 try
                 {
-                    _blogPostService.AddCommentToBlogPost(Id, comment);
+                    _blogPostService.AddComment(Id, comment);
+                    TempData["CommentSuccess"] = "Your comment has been added!";
+                }
+                catch (Exception ex)
+                {
+                    TempData["CommentError"] = "An error occurred while adding the comment: " + ex.Message;
+                }
+            }
+            else
+            {
+                TempData["CommentError"] = "Please fill in all required fields.";
+            }
+
+            return RedirectToAction("BlogPost", new { id = Id });
+        }
+        [HttpPost]
+        public ActionResult AddReply(int Id, int commentId, Reply reply)
+        {
+            if (ModelState.IsValid) // You should define validation rules in your CommentModel
+            {
+                try
+                {
+                    _blogPostService.AddReply(Id, commentId, reply);
                     TempData["CommentSuccess"] = "Your comment has been added!";
                 }
                 catch (Exception ex)

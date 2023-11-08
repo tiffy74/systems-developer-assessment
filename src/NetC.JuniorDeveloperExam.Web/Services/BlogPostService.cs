@@ -13,31 +13,34 @@ namespace NetC.JuniorDeveloperExam.Web.Services
     public class BlogPostService
     {
         private readonly IMemoryCache _cache;
-
-        public BlogPostService(IMemoryCache cache)
+        private readonly IJsonService _jsonService;
+        private int commentIdCounter = 1;
+        private string path = HttpContext.Current.Server.MapPath("~/App_Data/Blog-Posts.json");
+        public BlogPostService(IMemoryCache cache, IJsonService jsonService)
         {
             _cache = cache;
+            _jsonService = jsonService;
         }
-        
+
         public List<Rootobject> GetAllBlogPosts()
         {
             if (_cache.TryGetValue("Index", out List<Rootobject> cachedBlogPosts))
             {
                 return cachedBlogPosts;
             }
-            var jsonFilePath = HttpContext.Current.Server.MapPath("~/App_Data/Blog-Posts.json");
-            string jsonContent = File.ReadAllText(jsonFilePath);
-            Rootobject rootObject = JsonConvert.DeserializeObject<Rootobject>(jsonContent);
+
+            Rootobject rootObject = _jsonService.ReadJson<Rootobject>(path);
             List<Rootobject> blogPosts = new List<Rootobject> { rootObject };
 
             var cacheEntryOptions = new MemoryCacheEntryOptions
             {
-                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30)
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMilliseconds(30)
             };
             _cache.Set("Index", blogPosts, cacheEntryOptions);
-            
+
             return blogPosts;
         }
+
         public Blogpost GetBlogPostById(int id)
         {
             string cacheKey = "BlogPost_" + id;
@@ -47,9 +50,7 @@ namespace NetC.JuniorDeveloperExam.Web.Services
                 return cachedBlogPost;
             }
 
-            var jsonFilePath = HttpContext.Current.Server.MapPath("~/App_Data/Blog-Posts.json");
-            string jsonContent = File.ReadAllText(jsonFilePath);
-            Rootobject rootObject = JsonConvert.DeserializeObject<Rootobject>(jsonContent);
+            Rootobject rootObject = _jsonService.ReadJson<Rootobject>(path);
             List<Rootobject> blogPosts = new List<Rootobject> { rootObject };
             List<Blogpost> blogPost = new List<Blogpost>();
             foreach (Rootobject obj in blogPosts)
@@ -63,40 +64,92 @@ namespace NetC.JuniorDeveloperExam.Web.Services
 
             var cacheEntryOptions = new MemoryCacheEntryOptions
             {
-                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30)
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMilliseconds(30)
             };
             _cache.Set(cacheKey, blogPost.FirstOrDefault(x => x.id == id), cacheEntryOptions);
 
             return blogPost.FirstOrDefault(x => x.id == id);
         }
-        public void AddCommentToBlogPost(int blogPostId, Comment comment)
-        {
-            // Retrieve the Blogpost JSON data from the file
-            var jsonFilePath = HttpContext.Current.Server.MapPath("~/App_Data/Blog-Posts.json");
-            string jsonContent = File.ReadAllText(jsonFilePath);
-            Rootobject rootObject = JsonConvert.DeserializeObject<Rootobject>(jsonContent);
 
-            // Find the specific blog post by ID
-            Blogpost blogPost = rootObject.blogPosts.FirstOrDefault(post => post.id == blogPostId);
+        public void AddComment(int blogPostId, Comment commentForm)
+        {
+            Rootobject rootObject = _jsonService.ReadJson<Rootobject>(path);
+            var blogPost = rootObject.blogPosts.FirstOrDefault(bp => bp.id == blogPostId);
 
             if (blogPost != null)
             {
-                var date = DateTime.Now;
-                // Create a new comment
-                Comment newComment = new Comment
+                if (blogPost.comments == null)
                 {
-                    name = comment.name,
-                    emailAddress = comment.emailAddress,
-                    message = comment.message,
-                    date = date
+                    blogPost.comments = new List<Comment>();
+                }
+
+                int commentCount = blogPost.comments.Count;
+
+                Comment comment = new Comment
+                {
+                    BlogPostid = blogPostId,
+                    CommentId = commentCount + 1,
+                    name = commentForm.name,
+                    emailAddress = commentForm.emailAddress,
+                    date = DateTime.Now,
+                    message = commentForm.message
                 };
+                // Add the comment to the blog post's comments list
+                blogPost.comments.Add(comment);
 
-                // Add the new comment to the blog post's comments
-                blogPost.comments.Add(newComment);
-
-                // Update the JSON data with the new comment
-                File.WriteAllText(jsonFilePath, JsonConvert.SerializeObject(rootObject, Formatting.Indented));
+                _jsonService.WriteJson<Rootobject>(path, rootObject);
             }
+            else
+            {
+                // Handle the case where the blog post is not found (e.g., return an error or throw an exception).
+                throw new Exception("Blog post not found.");
+            }
+        }
+        public void AddReply(int blogPostId, int commentId, Reply replyForm)
+        {
+            Rootobject rootObject = _jsonService.ReadJson<Rootobject>(path);
+
+            // Find the blog post
+            var blogPost = rootObject.blogPosts.FirstOrDefault(post => post.id == blogPostId);
+
+            if (blogPost == null)
+            {
+                // Handle the case where the blog post doesn't exist
+                throw new InvalidOperationException("Blog post not found.");
+            }
+
+            // Find the comment
+            var comment = blogPost.comments.FirstOrDefault(c => c.CommentId == commentId);
+
+            if (comment == null)
+            {
+                // Handle the case where the comment doesn't exist
+                throw new InvalidOperationException("Comment not found.");
+            }
+
+            // If replies is null, initialize it
+            if (comment.replies == null)
+            {
+                comment.replies = new List<Reply>();
+            }
+
+            // Calculate the next reply ID
+            int replyCount = comment.replies.Count;
+
+            // Add the reply
+            comment.replies.Add(new Reply
+            {
+                BlogPostid = blogPostId,
+                CommentId = commentId,
+                ReplyId = replyCount + 1,
+                name = replyForm.name,
+                emailAddress = replyForm.emailAddress,
+                date = DateTime.Now,
+                message = replyForm.message
+            });
+
+            // Save changes
+            _jsonService.WriteJson<Rootobject>(path, rootObject);
         }
     }
 }

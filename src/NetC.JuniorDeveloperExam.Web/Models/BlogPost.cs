@@ -22,10 +22,24 @@ namespace NetC.JuniorDeveloperExam.Web.Models
         public string image { get; set; }
         public string htmlContent { get; set; }
         public List<Comment> comments { get; set; }
+        public Comment comment { get; set; }
     }
 
     public class Comment
     {
+        public int BlogPostid { get; set; }
+        public int CommentId { get; set; }
+        public string name { get; set; }
+        public DateTime date { get; set; }
+        public string emailAddress { get; set; }
+        public string message { get; set; }
+        public List<Reply> replies { get; set; }
+    }
+    public class Reply
+    {
+        public int BlogPostid { get; set; }
+        public int CommentId { get; set; }
+        public int ReplyId { get; set; }
         public string name { get; set; }
         public DateTime date { get; set; }
         public string emailAddress { get; set; }

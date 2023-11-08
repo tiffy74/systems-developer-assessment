@@ -70,6 +70,9 @@
     <Reference Include="Serilog, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
       <HintPath>..\packages\Serilog.3.0.1\lib\net471\Serilog.dll</HintPath>
     </Reference>
+    <Reference Include="Serilog.Sinks.File, Version=5.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
+      <HintPath>..\packages\Serilog.Sinks.File.5.0.0\lib\net45\Serilog.Sinks.File.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
@@ -171,10 +174,13 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\BlogList.cs" />
     <Compile Include="Models\BlogPost.cs" />
-    <Compile Include="Models\CommentForm.cs" />
+    <Compile Include="Models\Form.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\BlogPostService.cs" />
+    <Compile Include="Services\JsonService.cs" />
+    <Compile Include="Services\IJsonService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\Scripts\bootstrap.bundle.min.js" />
@@ -201,8 +207,9 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Blog\BlogPost.cshtml" />
     <Content Include="Views\Blog\Index.cshtml" />
-    <Content Include="Views\Partials\Comments.cshtml" />
     <Content Include="Views\Partials\CommentsForm.cshtml" />
+    <Content Include="Views\Partials\Replies.cshtml" />
+    <Content Include="Views\Partials\Comments.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
