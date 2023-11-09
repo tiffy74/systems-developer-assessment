@@ -37,96 +37,86 @@
                         @Html.ValidationMessageFor(model => model.comment.emailAddress, "", new { @class = "text-danger" })
                     </div>
                 </div>
-
                 <div class="form-group">
                     @Html.LabelFor(model => model.comment.message, "Comment")
                     @Html.TextAreaFor(model => model.comment.message, new { @class = "form-control", rows = "3" })
                     @Html.ValidationMessageFor(model => model.comment.message, "", new { @class = "text-danger" })
                 </div>
-
-
-
                 <button type="submit" class="btn btn-primary">Submit</button>
             }
         </div>
     </div>
     <hr>
-<div class="col-lg-12">
-    <h2 class="mt-4">Comments</h2>
-    <hr>
+    <div class="col-lg-12">
+        <h2 class="mt-4">Comments</h2>
+        <hr>
 
-    @if (Model.comments != null && Model.comments.Any())
-    {
-        for (int i = 0; i < Model.comments.Count; i++)
-        {
-            if (Model.comments[i].name != null)
+            @if (Model.comments != null && Model.comments.Any())
             {
-                var avatarUrl = Model.comments[i].name.Contains(" ") ? $"https://eu.ui-avatars.com/api/?name={Model.comments[i].name.Replace(" ", "+")}" : $"https://eu.ui-avatars.com/api/?name={Model.comments[i].name}";
-
-                <div class="media mb-4">
-                    <img class="d-flex mr-3 rounded-circle user-avatar" src="@avatarUrl" alt="@Model.comments[i].name">
-                    <div class="media-body">
-                        <h5 class="mt-0">@Model.comments[i].name <small><em>(@Model.comments[i].date)</em></small></h5>
-                        @Html.Raw(Model.comments[i].message)
-                    </div>
-                    <!-- Reply Button -->
-                    <button class="btn btn-primary" onclick="showReplyForm(this, @Model.comments[i].CommentId)">Reply</button>
-                </div>
-                        <!-- Reply Form -->
-                <div class="card my-4 reply-box d-none" id="@("Reply"+Model.comments[i].CommentId)">
-                    <h4 class="card-header">Leave a Reply:</h4>
-                    <div class="card-body">
-                        <!-- Start the form for each reply -->
-                        @using (Html.BeginForm("AddReply", "Blog", new { id = Model.id, commentId = Model.comments[i].CommentId }, FormMethod.Post))
-                        {
-                            @Html.AntiForgeryToken()
-                            <!-- To keep track of which comment this reply belongs to -->
-                            @Html.HiddenFor(m => m.comments[i].CommentId)
-                            <div class="form-row">
-                                <div class="form-group col-md-6">
-                                    <label id=@("NameLabel"+i) for="Name">Name</label>
-                                    <input aria-labelledby=@("NameLabel"+i) @*id=@("Name"+i)*@ required class="form-control" name="Name" placeholder="Name">
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <label id=@("EmailLabel"+i) for="Email">Email</label>
-                                    <input aria-labelledby=@("EmailLabel"+i) @*id=@("Email"+i)*@ required type="Email" class="form-control" name="Email" placeholder="Email">
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label id=@("MessageLabel"+i) for="Message">Message</label>
-                                <textarea aria-labelledby=@("MessageLabel"+i) required @*id="Message"*@ name="Message" class="form-control" rows="3"></textarea>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Reply</button>
-                        }
-                    </div>
-                </div>
-                        
-
-            if (Model.comments[i].replies != null && Model.comments[i].replies.Any())
-            {
-                foreach (var reply in Model.comments[i].replies)
+                for (int i = 0; i < Model.comments.Count; i++)
                 {
+                    if (Model.comments[i].name != null)
                     {
-                        <div style="padding-left: 1.25em">
-                            <div class="media mb-4">
-                                <img class="d-flex mr-3 rounded-circle user-avatar" src=@("https://eu.ui-avatars.com/api/?name=" + reply.name.Replace(" ", "+")) alt="@reply.name">
-                                <div class="media-body">
-                                    <h5 class="mt-0">@reply.name <small><em>(@reply.date)</em></small></h5>
-                                    @reply.message
-                                </div>
+                        var avatarUrl = Model.comments[i].name.Contains(" ") ? $"https://eu.ui-avatars.com/api/?name={Model.comments[i].name.Replace(" ", "+")}" : $"https://eu.ui-avatars.com/api/?name={Model.comments[i].name}";
+
+                        <div class="media mb-4">
+                            <img class="d-flex mr-3 rounded-circle user-avatar" src="@avatarUrl" alt="@Model.comments[i].name">
+                            <div class="media-body">
+                                <h5 class="mt-0">@Model.comments[i].name <small><em>(@Model.comments[i].date)</em></small></h5>
+                                @Html.Raw(Model.comments[i].message)
+                            </div>
+                            <!-- Reply Button -->
+                            <button class="btn btn-primary" onclick="showReplyForm(this, @Model.comments[i].CommentId)">Reply</button>
+                        </div>
+                                <!-- Reply Form -->
+                        <div class="card my-4 reply-box d-none" id="@("Reply"+Model.comments[i].CommentId)">
+                            <h4 class="card-header">Leave a Reply:</h4>
+                            <div class="card-body">
+                                <!-- Start the form for each reply -->
+                                @using (Html.BeginForm("AddReply", "Blog", new { id = Model.id, commentId = Model.comments[i].CommentId }, FormMethod.Post))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    <!-- keep track of  comment this reply belongs to -->
+                                    @Html.HiddenFor(m => m.comments[i].CommentId)
+                                    <div class="form-row">
+                                        <div class="form-group col-md-6">
+                                            <label id=@("NameLabel"+i) for="Name">Name</label>
+                                            <input aria-labelledby=@("NameLabel"+i) @*id=@("Name"+i)*@ required class="form-control" name="Name" placeholder="Name">
+                                        </div>
+                                        <div class="form-group col-md-6">
+                                            <label id=@("EmailLabel"+i) for="Email">Email</label>
+                                            <input aria-labelledby=@("EmailLabel"+i) @*id=@("Email"+i)*@ required type="Email" class="form-control" name="Email" placeholder="Email">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label id=@("MessageLabel"+i) for="Message">Message</label>
+                                        <textarea aria-labelledby=@("MessageLabel"+i) required @*id="Message"*@ name="Message" class="form-control" rows="3"></textarea>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Reply</button>
+                                }
                             </div>
                         </div>
+
+                        if (Model.comments[i].replies != null && Model.comments[i].replies.Any())
+                        {
+                            foreach (var reply in Model.comments[i].replies)
+                            {
+                                {
+                                    <div style="padding-left: 1.25em">
+                                        <div class="media mb-4">
+                                            <img class="d-flex mr-3 rounded-circle user-avatar" src=@("https://eu.ui-avatars.com/api/?name=" + reply.name.Replace(" ", "+")) alt="@reply.name">
+                                            <div class="media-body">
+                                                <h5 class="mt-0">@reply.name <small><em>(@reply.date)</em></small></h5>
+                                                @reply.message
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        }
                     }
                 }
             }
-        }
-    }
-
-}
+    </div>
 </div>
-</div>
-
-<script type="text/javascript">
-    
-</script>
