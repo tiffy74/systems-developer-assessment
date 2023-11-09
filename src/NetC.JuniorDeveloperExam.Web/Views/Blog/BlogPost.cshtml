@@ -13,9 +13,9 @@
         <hr>
         <p>Posted on @Model.date</p>
         <hr>
-        <img src="@Model.image" />
+        <img class="blogimg" src="@Model.image" />
         <hr>
-        <p>@Html.Raw(Model.htmlContent)</p>
+        <p class="blogtxt">@Html.Raw(Model.htmlContent)</p>
     </div>
     <hr>
     <div class="card my-4">
@@ -54,8 +54,6 @@
 <div class="col-lg-12">
     <h2 class="mt-4">Comments</h2>
     <hr>
-    
-    
 
     @if (Model.comments != null && Model.comments.Any())
     {
@@ -63,11 +61,7 @@
         {
             if (Model.comments[i].name != null)
             {
-                string avatarName = Model.comments[i].name;
-                string replaceName = Model.comments[i].name.Replace(" ", "+");
-                var avatarUrlwithoutSpace = $"https://eu.ui-avatars.com/api/?name={avatarName}";
-                var avatarUrlwithSpace = $"https://eu.ui-avatars.com/api/?name={replaceName}";
-                var avatarUrl = avatarName.Contains(" ") ? avatarUrlwithSpace : avatarUrlwithoutSpace;
+                var avatarUrl = Model.comments[i].name.Contains(" ") ? $"https://eu.ui-avatars.com/api/?name={Model.comments[i].name.Replace(" ", "+")}" : $"https://eu.ui-avatars.com/api/?name={Model.comments[i].name}";
 
                 <div class="media mb-4">
                     <img class="d-flex mr-3 rounded-circle user-avatar" src="@avatarUrl" alt="@Model.comments[i].name">
@@ -134,17 +128,5 @@
 </div>
 
 <script type="text/javascript">
-    function showReplyForm(button, commentId) {
-        // Find the corresponding reply form for the button that was clicked
-        var replyForm = document.getElementById('Reply' + commentId);
-
-        // Toggle the 'd-none' class which controls the visibility of the form
-        if (replyForm.classList.contains('d-none')) {
-            replyForm.classList.remove('d-none');
-            button.textContent = "Cancel"; // Change button text to 'Cancel'
-        } else {
-            replyForm.classList.add('d-none');
-            button.textContent = "Reply"; // Change button text back to 'Reply'
-        }
-    }
+    
 </script>

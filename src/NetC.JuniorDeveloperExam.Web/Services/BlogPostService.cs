@@ -14,7 +14,6 @@ namespace NetC.JuniorDeveloperExam.Web.Services
     {
         private readonly IMemoryCache _cache;
         private readonly IJsonService _jsonService;
-        private int commentIdCounter = 1;
         private string path = HttpContext.Current.Server.MapPath("~/App_Data/Blog-Posts.json");
         public BlogPostService(IMemoryCache cache, IJsonService jsonService)
         {
@@ -24,6 +23,7 @@ namespace NetC.JuniorDeveloperExam.Web.Services
 
         public List<Rootobject> GetAllBlogPosts()
         {
+            // Check cache and see if cached posts
             if (_cache.TryGetValue("Index", out List<Rootobject> cachedBlogPosts))
             {
                 return cachedBlogPosts;
@@ -32,9 +32,11 @@ namespace NetC.JuniorDeveloperExam.Web.Services
             Rootobject rootObject = _jsonService.ReadJson<Rootobject>(path);
             List<Rootobject> blogPosts = new List<Rootobject> { rootObject };
 
+
+            // Set cache timer
             var cacheEntryOptions = new MemoryCacheEntryOptions
             {
-                AbsoluteExpirationRelativeToNow = TimeSpan.FromMilliseconds(30)
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5)
             };
             _cache.Set("Index", blogPosts, cacheEntryOptions);
 
@@ -43,6 +45,7 @@ namespace NetC.JuniorDeveloperExam.Web.Services
 
         public Blogpost GetBlogPostById(int id)
         {
+            // Set a unique key for cached item
             string cacheKey = "BlogPost_" + id;
 
             if (_cache.TryGetValue("BlogPost", out Blogpost cachedBlogPost))
@@ -61,10 +64,10 @@ namespace NetC.JuniorDeveloperExam.Web.Services
                     blogPost.Add(post);
                 }
             }
-
+            // Set Cache Timer
             var cacheEntryOptions = new MemoryCacheEntryOptions
             {
-                AbsoluteExpirationRelativeToNow = TimeSpan.FromMilliseconds(30)
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5)
             };
             _cache.Set(cacheKey, blogPost.FirstOrDefault(x => x.id == id), cacheEntryOptions);
 
@@ -94,14 +97,13 @@ namespace NetC.JuniorDeveloperExam.Web.Services
                     date = DateTime.Now,
                     message = commentForm.message
                 };
-                // Add the comment to the blog post's comments list
                 blogPost.comments.Add(comment);
 
                 _jsonService.WriteJson<Rootobject>(path, rootObject);
             }
             else
             {
-                // Handle the case where the blog post is not found (e.g., return an error or throw an exception).
+                // Handle exceptions
                 throw new Exception("Blog post not found.");
             }
         }
@@ -109,21 +111,20 @@ namespace NetC.JuniorDeveloperExam.Web.Services
         {
             Rootobject rootObject = _jsonService.ReadJson<Rootobject>(path);
 
-            // Find the blog post
+            // Find post
             var blogPost = rootObject.blogPosts.FirstOrDefault(post => post.id == blogPostId);
 
             if (blogPost == null)
             {
-                // Handle the case where the blog post doesn't exist
+
                 throw new InvalidOperationException("Blog post not found.");
             }
 
-            // Find the comment
+            // Find comment
             var comment = blogPost.comments.FirstOrDefault(c => c.CommentId == commentId);
 
             if (comment == null)
             {
-                // Handle the case where the comment doesn't exist
                 throw new InvalidOperationException("Comment not found.");
             }
 

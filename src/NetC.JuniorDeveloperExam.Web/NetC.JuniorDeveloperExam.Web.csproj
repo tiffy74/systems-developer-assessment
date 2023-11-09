@@ -1,5 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\NUnit3TestAdapter.4.5.0\build\net462\NUnit3TestAdapter.props" Condition="Exists('..\packages\NUnit3TestAdapter.4.5.0\build\net462\NUnit3TestAdapter.props')" />
+  <Import Project="..\packages\NUnit.3.14.0\build\NUnit.props" Condition="Exists('..\packages\NUnit.3.14.0\build\NUnit.props')" />
   <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.0\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.0\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -45,6 +47,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Castle.Core, Version=5.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <HintPath>..\packages\Castle.Core.5.1.1\lib\net462\Castle.Core.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=7.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.7.0.0\lib\net462\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
     </Reference>
@@ -66,6 +71,12 @@
     </Reference>
     <Reference Include="Microsoft.Extensions.Primitives, Version=7.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Extensions.Primitives.7.0.0\lib\net462\Microsoft.Extensions.Primitives.dll</HintPath>
+    </Reference>
+    <Reference Include="Moq, Version=4.20.69.0, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
+      <HintPath>..\packages\Moq.4.20.69\lib\net462\Moq.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework, Version=3.14.0.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\NUnit.3.14.0\lib\net45\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="Serilog, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
       <HintPath>..\packages\Serilog.3.0.1\lib\net471\Serilog.dll</HintPath>
@@ -170,13 +181,11 @@
     <Compile Include="App_Start\UnityMvcActivator.cs" />
     <Compile Include="BlogConfiguration.cs" />
     <Compile Include="Controllers\BlogController.cs" />
-    <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\BlogList.cs" />
     <Compile Include="Models\BlogPost.cs" />
-    <Compile Include="Models\Form.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\BlogPostService.cs" />
     <Compile Include="Services\JsonService.cs" />
@@ -184,6 +193,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\Scripts\bootstrap.bundle.min.js" />
+    <Content Include="Assets\Scripts\ReplyForm.js" />
     <Content Include="Assets\Scripts\unobtrusive-bootstrap.js" />
     <Content Include="Assets\Styles\bootstrap.min.css" />
     <Content Include="Assets\Styles\custom.css" />
@@ -196,9 +206,7 @@
     <Content Include="Web.config" />
     <Content Include="Views\Web.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Views\Home\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Content Include="App_Data\Blog-Posts.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -207,9 +215,6 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Blog\BlogPost.cshtml" />
     <Content Include="Views\Blog\Index.cshtml" />
-    <Content Include="Views\Partials\CommentsForm.cshtml" />
-    <Content Include="Views\Partials\Replies.cshtml" />
-    <Content Include="Views\Partials\Comments.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
@@ -244,6 +249,8 @@
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.0\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.0\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
+    <Error Condition="!Exists('..\packages\NUnit.3.14.0\build\NUnit.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\NUnit.3.14.0\build\NUnit.props'))" />
+    <Error Condition="!Exists('..\packages\NUnit3TestAdapter.4.5.0\build\net462\NUnit3TestAdapter.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\NUnit3TestAdapter.4.5.0\build\net462\NUnit3TestAdapter.props'))" />
   </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
